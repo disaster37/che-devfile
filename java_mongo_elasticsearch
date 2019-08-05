@@ -1,0 +1,80 @@
+metadata:
+  name: java-8
+components:
+  - id: redhat/java/latest
+    type: chePlugin
+  - mountSources: true
+    endpoints:
+      - name: 8080/tcp
+        port: 8080
+    command:
+      - sleep
+    args:
+      - infinity
+    memoryLimit: 1024Mi
+    type: dockerimage
+    volumes:
+      - name: m2
+        containerPath: /home/user/.m2
+      - name: userspace
+        containerPath: /home/dev
+    alias: tools
+    image: registry.centos.org/che-stacks/centos-jdk8
+    env:
+      - value: >-
+          -XX:MaxRAMPercentage=50.0 -XX:+UseParallelGC -XX:MinHeapFreeRatio=10
+          -XX:MaxHeapFreeRatio=20 -XX:GCTimeRatio=4
+          -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true
+          -Xms20m -Djava.security.egd=file:/dev/./urandom -Duser.home=/home/user
+        name: JAVA_OPTS
+      - value: $(JAVA_OPTS)
+        name: MAVEN_OPTS
+      - value: '$(echo ${0})\\$'
+        name: PS1
+  - mountSources: false
+    endpoints:
+      - name: es2
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+        port: 9200
+    memoryLimit: 1024Mi
+    type: dockerimage
+    alias: elasticsearch
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.2.0'
+    env:
+      - value: test
+        name: cluster.name
+      - value: single-node
+        name: discovery.type
+      - value: changeme
+        name: ELASTIC_PASSWORD
+      - value: 'true'
+        name: xpack.security.enabled
+      - value: '-Xms512m -Xmx512m'
+        name: ES_JAVA_OPTS
+  - mountSources: false
+    endpoints:
+      - name: mongo
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+        port: 27017
+    command:
+      - /bin/sh
+      - '-c'
+    args:
+      - mongod --wiredTigerCacheSizeGB 0.5
+    memoryLimit: 600Mi
+    type: dockerimage
+    volumes:
+      - name: mongo
+        containerPath: /data/db
+    alias: mongo
+    image: 'mongo:4.1.13'
+    env:
+      - value: root
+        name: MONGO_INITDB_ROOT_USERNAME
+      - value: changeme
+        name: MONGO_INITDB_ROOT_PASSWORD
+apiVersion: 1.0.0
