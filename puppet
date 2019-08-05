@@ -4,6 +4,9 @@ components:
   - alias: puppet-plugin
     type: chePlugin
     reference: https://raw.githubusercontent.com/disaster37/che-remote-plugin-puppet/master/v3/plugins/jpogran/puppet-vscode/latest/meta.yaml
+  - alias: ruby-plugin
+    type: chePlugin
+    reference: https://raw.githubusercontent.com/disaster37/che-remote-plugin-ruby/master/v3/plugins/rebornix/Ruby/latest/meta.yaml
   - mountSources: true
     endpoints:
       - name: app
