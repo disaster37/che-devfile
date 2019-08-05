@@ -1,0 +1,58 @@
+metadata:
+  name: puppet2
+components:
+  - alias: puppet-plugin
+    type: chePlugin
+    reference: https://raw.githubusercontent.com/disaster37/che-remote-plugin-puppet/master/v3/plugins/jpogran/puppet-vscode/latest/meta.yaml
+  - mountSources: true
+    endpoints:
+      - name: app
+        port: 8080
+    memoryLimit: 512Mi
+    type: dockerimage
+    volumes:
+      - name: userspace
+        containerPath: /home/dev
+    alias: puppet-cli
+    image: 'webcenter/che-puppet:latest'
+  - mountSources: true
+    referenceContent: |
+      apiVersion: v1
+      kind: List
+      items:
+        - apiVersion: v1
+          kind: Pod
+          metadata:
+            name: docker
+            labels:
+              app: docker
+          spec:
+            containers:
+              - image: docker:stable-dind
+                name: docker
+                env:
+                  - name: DOCKER_TLS_CERTDIR
+                    value: ''
+                securityContext:
+                  privileged: true
+                  allowPrivilegeEscalation: true
+                  runAsUser: 0
+                ports:
+                  - name: docker
+                    containerPort: 2375
+        - apiVersion: v1
+          kind: Service
+          metadata:
+            name: docker
+            labels:
+              app: docker
+          spec:
+            type: ClusterIP
+            ports:
+              - port: 2375
+                targetPort: 2375
+            selector:
+              app: docker
+    type: kubernetes
+    reference: docker.yaml
+apiVersion: 1.0.0
