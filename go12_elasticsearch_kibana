@@ -1,0 +1,63 @@
+metadata:
+  name: golang-12
+components:
+  - id: ms-vscode/go/latest
+    memoryLimit: 512Mi
+    type: chePlugin
+    alias: go-plugin
+  - mountSources: true
+    memoryLimit: 512Mi
+    type: dockerimage
+    volumes:
+      - name: userspace
+        containerPath: /home/dev
+    alias: go-cli
+    image: 'webcenter/che-go:latest'
+    env:
+      - value: '/go:$(CHE_PROJECTS_ROOT)'
+        name: GOPATH
+      - value: /tmp/.cache
+        name: GOCACHE
+      - value: 'on'
+        name: GO111MODULE
+  - mountSources: false
+    endpoints:
+      - name: es
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+        port: 9200
+    memoryLimit: 512Mi
+    type: dockerimage
+    alias: elasticsearch
+    image: 'docker.elastic.co/elasticsearch/elasticsearch:7.2.0'
+    env:
+      - value: test
+        name: cluster.name
+      - value: single-node
+        name: discovery.type
+      - value: changeme
+        name: ELASTIC_PASSWORD
+      - value: 'true'
+        name: xpack.security.enabled
+      - value: '-Xms512m -Xmx512m'
+        name: ES_JAVA_OPTS
+  - mountSources: false
+    endpoints:
+      - name: kb
+        attributes:
+          discoverable: 'true'
+          public: 'false'
+        port: 5601
+    memoryLimit: 512Mi
+    type: dockerimage
+    alias: kibana
+    image: 'docker.elastic.co/kibana/kibana:7.2.0'
+    env:
+      - value: 'http://es:9200'
+        name: ELASTICSEARCH_HOSTS
+      - value: elastic
+        name: ELASTICSEARCH_USERNAME
+      - value: changeme
+        name: ELASTICSEARCH_PASSWORD
+apiVersion: 1.0.0
