@@ -5,9 +5,6 @@ components:
     endpoints:
       - name: nodejs
         port: 4200
-    command:
-      - sleep
-      - infinity
     memoryLimit: 512Mi
     type: dockerimage
     volumes:
