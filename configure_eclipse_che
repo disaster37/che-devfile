@@ -1,0 +1,9 @@
+## Editer la config map che
+  - CHE_INFRA_KUBERNETES_PVC_STRATEGY=per-workspace
+  - CHE_INFRA_KUBERNETES_WORKSPACE__UNRECOVERABLE__EVENTS: FailedScheduling,Failed to pull image,FailedCreate
+  
+## Autoriser http sur la gestion de keycloak
+/opt/jboss/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080/auth --realm master --user admin
+/opt/jboss/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
+
+## Désactiver dans keycloak la registration des users
