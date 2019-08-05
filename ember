@@ -1,0 +1,18 @@
+metadata:
+  name: emberjs
+components:
+  - mountSources: true
+    endpoints:
+      - name: nodejs
+        port: 4200
+    command:
+      - sleep
+      - infinity
+    memoryLimit: 512Mi
+    type: dockerimage
+    volumes:
+      - name: userspace
+        containerPath: /home/dev
+    alias: nodejs
+    image: 'webcenter/che-ember:latest'
+apiVersion: 1.0.0
